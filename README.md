@@ -28,7 +28,7 @@ This is a fully functional AliExpress clone built using **React** for the fronte
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-username/aliexpress-clone.git
+git clone https://github.com/Kingpin-10/aliexpress-clone.git
 cd aliexpress-clone
 npm install
 npm run dev
