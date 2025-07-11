@@ -23,7 +23,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/products/${id}`)
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`)
       .then((res) => setProduct(res.data))
       .catch(() => toast.error("Failed to load product"))
       .finally(() => setLoading(false));
