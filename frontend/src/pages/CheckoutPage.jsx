@@ -26,7 +26,7 @@ const CheckoutPage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/orders",
+        `${import.meta.env.VITE_BACKEND_URL}/api/orders`,
         {
           cartItems, // ✅ must match backend model
           address,
