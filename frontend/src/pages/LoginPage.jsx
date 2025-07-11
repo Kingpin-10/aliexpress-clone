@@ -15,7 +15,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", form);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, form);
       
       // Your backend returns: { _id, name, email, token }
       const { token, ...userData } = res.data;
