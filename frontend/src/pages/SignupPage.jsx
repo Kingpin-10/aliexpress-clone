@@ -15,7 +15,7 @@ const SignupPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, form);
       alert("Signup successful. Please login.");
       navigate("/login");
     } catch (err) {
