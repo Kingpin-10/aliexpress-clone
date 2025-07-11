@@ -7,7 +7,7 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/orders/my", {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/my`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setOrders(res.data))
