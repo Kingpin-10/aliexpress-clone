@@ -38,7 +38,7 @@ const ManageProducts = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
