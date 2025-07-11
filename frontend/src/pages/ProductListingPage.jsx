@@ -3,10 +3,10 @@ import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import { Heart, HeartOff } from "lucide-react";
 import useShopStore from "../store/useShopStore";
+import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 
 const ALLOWED_CATEGORIES = ["electronics", "clothes", "furniture", "shoes"];
-
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 const ProductListingPage = () => {
@@ -19,16 +19,17 @@ const ProductListingPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [priceRange, setPriceRange] = useState([0, 10000]);
 
+  const searchTerm = useShopStore((s) => s.searchTerm.trim().toLowerCase());
+  const cartItems = useShopStore((s) => s.cartItems);
+  const addToCart = useShopStore((s) => s.addToCart);
   const favourites = useShopStore((s) => s.favouriteItems);
   const toggleFavourite = useShopStore((s) => s.toggleFavourite);
-  const addToCart = useShopStore((s) => s.addToCart);
-  const cartItems = useShopStore((s) => s.cartItems);
-  const searchTerm = useShopStore((s) => s.searchTerm.trim().toLowerCase());
 
-  // Fetch products on mount
+  const user = useAuthStore((s) => s.user);
+
   useEffect(() => {
     axios
-      .get("https://api.escuelajs.co/api/v1/products?offset=0&limit=100")
+      .get("http://localhost:5000/api/products")
       .then((res) => {
         const cleaned = res.data.filter(
           (p) =>
@@ -42,7 +43,6 @@ const ProductListingPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Filtering logic
   useEffect(() => {
     const filteredProducts = allProducts.filter((p) => {
       const category = p.category?.name?.toLowerCase();
@@ -53,7 +53,6 @@ const ProductListingPage = () => {
       const matchesSearch = p.title.toLowerCase().includes(searchTerm);
       return matchesCategory && matchesPrice && matchesSearch;
     });
-
     setFiltered(filteredProducts);
   }, [selectedCategory, priceRange, searchTerm, allProducts]);
 
@@ -61,22 +60,25 @@ const ProductListingPage = () => {
     cartItems.some((item) => item.id === id && item.size === "N/A");
 
   const handleAddToCart = (product) => {
-    if (isInCart(product.id)) {
-      toast("Item already in cart", { icon: "⚠️" });
-      return;
-    }
+    if (!user) return toast.error("Please login to add to cart");
+    if (isInCart(product._id)) return toast("Item already in cart");
 
     const item = {
-      id: product.id,
+      id: product._id,
       name: product.title,
       price: product.price,
-      image: product.images?.[0] || "",
+      image: product.image || "",
       size: "N/A",
       quantity: 1,
     };
 
     addToCart(item);
     toast.success("Added to cart");
+  };
+
+  const handleToggleFavourite = (product) => {
+    if (!user) return toast.error("Please login to add to favourites");
+    toggleFavourite(product);
   };
 
   if (loading) return <p className="p-4">Loading products...</p>;
@@ -122,19 +124,18 @@ const ProductListingPage = () => {
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Products */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filtered.map((product) => {
-          const inFav = favourites.some((i) => i.id === product.id);
-
+          const inFav = favourites.some((i) => i.id === product._id);
           return (
             <div
-              key={product.id}
-              className="border rounded-lg p-4 shadow bg-white transform transition duration-300 hover:scale-105 hover:shadow-lg"
+              key={product._id}
+              className="border rounded-lg p-4 shadow bg-white hover:shadow-lg transition hover:scale-105"
             >
-              <Link to={`/product/${product.id}`}>
+              <Link to={`/product/${product._id}`}>
                 <img
-                  src={product.images?.[0] || "/fallback.jpg"}
+                  src={product.image || "/fallback.jpg"}
                   alt={product.title}
                   className="w-full h-48 object-cover rounded"
                 />
@@ -146,10 +147,14 @@ const ProductListingPage = () => {
 
               <div className="mt-2 flex justify-between items-center">
                 <button
-                  onClick={() => toggleFavourite(product)}
+                  onClick={() => handleToggleFavourite(product)}
                   className="text-red-500"
                 >
-                  {inFav ? <Heart className="fill-red-500" /> : <HeartOff />}
+                  {inFav ? (
+                    <Heart className="fill-red-500 text-red-500" />
+                  ) : (
+                    <HeartOff />
+                  )}
                 </button>
 
                 <button
@@ -162,12 +167,6 @@ const ProductListingPage = () => {
             </div>
           );
         })}
-
-        {filtered.length === 0 && (
-          <p className="text-center text-gray-500 col-span-full">
-            No products found.
-          </p>
-        )}
       </div>
     </div>
   );

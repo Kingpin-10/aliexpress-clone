@@ -1,8 +1,9 @@
 import { ShoppingCart, Heart, Search, User, Menu } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import useShopStore from "../store/useShopStore";
 import { useAuthStore } from "../store/useAuthStore";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const searchTerm = useShopStore((s) => s.searchTerm);
@@ -12,17 +13,9 @@ const Navbar = () => {
   const totalCartQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-
-  useEffect(() => {
-    if (searchTerm.trim() && location.pathname !== "/products") {
-      navigate("/products");
-    }
-  }, [searchTerm, location.pathname, navigate]);
 
   const handleLogout = () => {
     logout();
@@ -36,19 +29,35 @@ const Navbar = () => {
         <h1 className="text-xl font-bold text-red-500 pl-8">AliExpress</h1>
       </Link>
 
+      {/* 🔍 Search Bar */}
       <div className="flex items-center w-full max-w-lg mx-4">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && searchTerm.trim()) {
+              navigate("/products");
+            }
+          }}
           placeholder="Search for products..."
           className="flex-grow px-3 py-2 border rounded-l-md focus:outline-none"
         />
-        <button className="px-3 py-2 bg-red-500 text-white rounded-r-md">
+        <button
+          className="px-3 py-2 bg-red-500 text-white rounded-r-md"
+          onClick={() => {
+            if (searchTerm.trim()) {
+              navigate("/products");
+            } else {
+              toast.error("Please enter something to search.");
+            }
+          }}
+        >
           <Search size={18} />
         </button>
       </div>
 
+      {/* Desktop Icons */}
       <div className="hidden lg:flex gap-6 items-center">
         <Link to="/favourite" className="relative">
           <Heart className="cursor-pointer" />
@@ -80,7 +89,7 @@ const Navbar = () => {
                   Admin Panel
                 </Link>
               )}
-              <button 
+              <button
                 onClick={handleLogout}
                 className="block w-full text-left px-3 py-2 hover:bg-gray-100"
               >

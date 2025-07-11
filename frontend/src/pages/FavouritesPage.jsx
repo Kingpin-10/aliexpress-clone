@@ -9,28 +9,31 @@ const FavouritesPage = () => {
   const [sizes, setSizes] = useState({});
 
   const needsSize = (category) =>
-    ["Clothing", "Footwear"].includes(category);
+    ["clothes", "shoes"].includes(category?.toLowerCase());
 
   const handleAddToCart = (item) => {
     const size = sizes[item.id] || "N/A";
+
     if (needsSize(item.category?.name) && !sizes[item.id]) {
       toast.error("Please select a size");
       return;
     }
 
-    addToCart({
-      ...item,
+    const cartItem = {
+      id: item.id || item._id,
       name: item.title,
-      image: item.images[0],
+      price: item.price,
+      image: item.image,
       size,
       quantity: 1,
-    });
+    };
 
+    addToCart(cartItem);
     toast.success("Added to cart");
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Favourites</h2>
 
       {favouriteItems.length === 0 ? (
@@ -42,7 +45,7 @@ const FavouritesPage = () => {
             className="flex items-center gap-4 border p-4 rounded mb-4 shadow-sm bg-white transition hover:shadow-md"
           >
             <img
-              src={item.images[0]}
+              src={item.image}
               alt={item.title}
               className="w-20 h-20 object-cover rounded"
             />
@@ -79,7 +82,7 @@ const FavouritesPage = () => {
                 </button>
                 <button
                   onClick={() => {
-                    removeFromFavourites(item.id);
+                    removeFromFavourites(item.id || item._id);
                     toast("Removed from favourites");
                   }}
                   className="px-3 py-1 border border-red-500 text-red-500 rounded transition hover:bg-red-500 hover:text-white"

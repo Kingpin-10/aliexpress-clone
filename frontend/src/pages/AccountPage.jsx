@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { Link } from "react-router-dom";
 
 const AccountPage = () => {
   const user = useAuthStore((state) => state.user);
@@ -28,6 +29,8 @@ const AccountPage = () => {
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Name:</strong> {user.name || 'Not provided'}</p>
         <p><strong>ID:</strong> {user._id}</p>
+        <Link to="/account/orders">Order History</Link>
+
       </div>
       <button 
         onClick={logout}

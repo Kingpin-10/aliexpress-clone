@@ -74,7 +74,7 @@ const CartPage = () => {
             Total: <span className="text-green-600">${total.toFixed(2)}</span>
           </div>
           <button
-            onClick={handleCheckout}
+            onClick={() => navigate("/checkout")}
             className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
           >
             Proceed to Buy

@@ -121,16 +121,19 @@ const useShopStore = create((set, get) => ({
   },
 
   toggleFavourite: (item) => {
-    set((state) => {
-      const exists = state.favouriteItems.some((fav) => fav.id === item.id);
-      const updatedFavourites = exists
-        ? state.favouriteItems.filter((fav) => fav.id !== item.id)
-        : [...state.favouriteItems, item];
+  const id = item._id || item.id; // normalize _id
+  const normalizedItem = { ...item, id }; // ensure consistent ID for comparison
 
-      localStorage.setItem('favourites', JSON.stringify(updatedFavourites));
-      return { favouriteItems: updatedFavourites };
-    });
-  },
+  set((state) => {
+    const exists = state.favouriteItems.some((fav) => fav.id === id);
+    const updatedFavourites = exists
+      ? state.favouriteItems.filter((fav) => fav.id !== id)
+      : [...state.favouriteItems, normalizedItem];
+
+    localStorage.setItem('favourites', JSON.stringify(updatedFavourites));
+    return { favouriteItems: updatedFavourites };
+  });
+},
 }));
 
 export default useShopStore;
