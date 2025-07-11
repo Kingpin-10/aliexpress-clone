@@ -18,7 +18,7 @@ const ManageProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/products", {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
