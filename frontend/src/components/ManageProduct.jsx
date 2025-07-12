@@ -68,12 +68,12 @@ const ManageProducts = () => {
               <h3 className="font-semibold">{product.title}</h3>
               <p className="text-sm text-gray-600">${product.price}</p>
               <div className="mt-2 flex justify-between gap-2">
-                <button
+{/*                 <button
                   className="bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => navigate(`/admin/edit-product/${product._id}`)}
                 >
                   Edit
-                </button>
+                </button> */}
                 <button
                   className="bg-red-600 text-white px-3 py-1 rounded"
                   onClick={() => handleDelete(product._id)}
