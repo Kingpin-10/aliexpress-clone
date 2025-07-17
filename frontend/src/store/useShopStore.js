@@ -120,6 +120,11 @@ const useShopStore = create((set, get) => ({
     });
   },
 
+   clearCart: () => {
+    localStorage.removeItem('cart'); // ✅ clear from localStorage
+    set({ cartItems: [] }); // ✅ clear from Zustand store
+  },
+
   toggleFavourite: (item) => {
   const id = item._id || item.id; // normalize _id
   const normalizedItem = { ...item, id }; // ensure consistent ID for comparison
