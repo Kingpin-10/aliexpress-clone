@@ -45,7 +45,7 @@ const CheckoutPage = () => {
       navigate("/account/orders"); // show order history
     } catch (err) {
       console.error("Order placement failed:", err);
-      toast.error("Failed to place order");
+      // toast.error("Failed to place order");
     }
   };
 
